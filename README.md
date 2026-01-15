@@ -39,22 +39,25 @@ RakthSetu connects **donors, hospitals, and NGOs** on a single platform to provi
 
 ---
 
-## 👥 Team
-- **Aryaman** – Backend (APIs, DB, Prisma)  
-- **Manvi** – Frontend (UI, Dashboards)  
-- **Arnav** – DevOps & Testing (Docker, CI/CD)  
+# RakthSetu 🩸  
+**Real-Time Blood Donation & Inventory Management Platform**
+
+RakthSetu is a full-stack web application built to solve blood shortages caused by **poor coordination and lack of real-time data**, not the lack of donors.
 
 ---
 
-## 🎓 Context
-Built as part of **Kalvium – Simulated Work (AP)**  
-Sprint #1: *Full-Stack Development with Next.js & Cloud*
+## 🚨 Problem
+- Outdated blood inventory systems  
+- No real-time visibility during emergencies  
+- Poor coordination between donors, hospitals, and NGOs  
 
 ---
 
-## 🌱 Vision
-To ensure **no life is lost due to missing or delayed blood availability data**.
+## 💡 Solution
+RakthSetu connects **donors, hospitals, and NGOs** on a single platform to provide:
+- 🧾 Live blood inventory tracking  
+- 🚑 Emergency blood requests  
+- 📍 Location-based donor discovery  
+- 🔐 Secure role-based access  
 
 ---
-
-🚧 *Project under active development*
