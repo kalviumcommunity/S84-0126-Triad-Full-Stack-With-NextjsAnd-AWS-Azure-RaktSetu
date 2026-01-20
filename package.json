@@ -2,7 +2,6 @@
   "name": "s84-0126-triad-raktsetu",
   "version": "0.1.0",
   "private": true,
-
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,17 +9,18 @@
     "lint": "eslint",
     "prepare": "husky install"
   },
-
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"]
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
-
   "dependencies": {
+    "js-cookie": "^3.0.5",
     "next": "16.1.2",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
-
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
