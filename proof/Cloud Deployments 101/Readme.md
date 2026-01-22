@@ -1,0 +1,11 @@
+# Understanding Cloud Deployments: Docker → CI/CD → AWS/Azure
+
+This project demonstrates how a full-stack application can be taken from a local development environment to the cloud using modern deployment practices. The deployment pipeline follows three key stages: containerization with Docker, automation using CI/CD, and cloud hosting on AWS/Azure.
+
+To ensure consistency across environments, the application was containerized using Docker. Separate Dockerfiles were created for the frontend and backend, defining the runtime environment, dependencies, and startup commands. Docker Compose was used to orchestrate multiple services such as the web app, database, and cache, enabling the entire stack to run locally with a single command. This approach eliminates environment mismatch issues and mirrors production behavior.
+
+For automation, a CI/CD pipeline was implemented using GitHub Actions. The pipeline is triggered on every push to the main branch. It automatically builds Docker images, runs basic checks, and prepares the application for deployment. Secrets such as database credentials, API keys, and cloud access tokens are securely managed using GitHub Secrets, ensuring sensitive information is never hardcoded or exposed in the repository.
+
+The final deployment was done on AWS/Azure using managed services such as EC2 / Elastic Beanstalk / Azure App Service. Environment variables were configured at the platform level to separate development, staging, and production environments. This allowed the same Docker image to be reused across environments with different configurations, improving maintainability and scalability.
+
+Throughout this process, the biggest challenge was configuring environment variables and debugging container-to-container communication issues. Docker logs and CI pipeline logs were crucial in identifying misconfigurations. Overall, Docker and CI/CD significantly improved deployment reliability, and in future iterations, infrastructure-as-code tools like Terraform or Bicep could further simplify cloud provisioning and environment setup.
