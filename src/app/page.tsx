@@ -27,6 +27,7 @@ export default function Home() {
       >
         RaktSetu
       </div>
+
       {/* Wrapper */}
       <div
         style={{
@@ -42,9 +43,9 @@ export default function Home() {
           <Image
             src="/images/blood.png"
             alt="Blood Donation"
-            width={900}
-            height={860}
-            style={{ width: "100%", height: "auto", maxWidth: 800 }}
+            width={700}
+            height={560}
+            style={{ width: "100%", height: "auto", maxWidth: 700 }}
             priority
           />
         </div>
@@ -95,7 +96,7 @@ export default function Home() {
             </Link>
 
             <Link
-              href="/login"
+              href="/signup"
               style={{
                 display: "inline-block",
                 padding: "12px 28px",
@@ -109,7 +110,7 @@ export default function Home() {
                 cursor: "pointer",
               }}
             >
-              Login
+              Sign up
             </Link>
           </div>
         </div>
