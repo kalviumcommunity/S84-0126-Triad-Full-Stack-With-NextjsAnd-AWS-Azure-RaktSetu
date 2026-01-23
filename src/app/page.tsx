@@ -1,32 +1,118 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-50 dark:bg-black">
-      <h1 className="text-3xl font-bold text-black dark:text-white">
+    <main
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "40px",
+        backgroundColor: "#fff",
+      }}
+    >
+      {/* Brand */}
+      <div
+        style={{
+          position: "absolute",
+          top: 20,
+          left: 20,
+          fontSize: 20,
+          fontWeight: 700,
+          color: "#e11d48",
+        }}
+      >
         RaktSetu
-      </h1>
+      </div>
+      {/* Wrapper */}
+      <div
+        style={{
+          maxWidth: "1200px",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          gap: "60px",
+        }}
+      >
+        {/* LEFT SIDE – IMAGE */}
+        <div style={{ flex: 1 }}>
+          <Image
+            src="/images/blood.png"
+            alt="Blood Donation"
+            width={900}
+            height={860}
+            style={{ width: "100%", height: "auto", maxWidth: 800 }}
+            priority
+          />
+        </div>
 
-      <p className="text-center text-zinc-600 dark:text-zinc-400 max-w-md">
-        A Next.js App Router project demonstrating public routes, protected
-        routes, and dynamic routing.
-      </p>
+        {/* RIGHT SIDE – TEXT */}
+        <div style={{ flex: 1 }}>
+          <h1
+            style={{
+              fontSize: "42px",
+              fontWeight: "700",
+              color: "#e11d48",
+              marginBottom: "20px",
+            }}
+          >
+            Donate Blood, Save Lives
+          </h1>
 
-      <div className="flex gap-4 mt-4">
-        <Link href="/login" className="rounded bg-red-600 px-4 py-2 text-white">
-          Login
-        </Link>
+          <p
+            style={{
+              fontSize: "18px",
+              color: "#444",
+              lineHeight: "1.6",
+              marginBottom: "30px",
+            }}
+          >
+            RaktSetu connects blood donors with those in need, making emergency
+            blood access faster, reliable, and transparent.
+          </p>
 
-        <Link
-          href="/dashboard"
-          className="rounded bg-black px-4 py-2 text-white"
-        >
-          Dashboard
-        </Link>
+          {/* BUTTONS */}
+          <div style={{ display: "flex", gap: "16px" }}>
+            <Link
+              href="/dashboard"
+              style={{
+                display: "inline-block",
+                padding: "12px 28px",
+                fontSize: "16px",
+                backgroundColor: "#e11d48",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                textDecoration: "none",
+                textAlign: "center",
+                cursor: "pointer",
+              }}
+            >
+              Go to Dashboard
+            </Link>
 
-        <Link href="/users/1" className="rounded border px-4 py-2">
-          User 1
-        </Link>
+            <Link
+              href="/login"
+              style={{
+                display: "inline-block",
+                padding: "12px 28px",
+                fontSize: "16px",
+                backgroundColor: "transparent",
+                color: "#e11d48",
+                border: "2px solid #e11d48",
+                borderRadius: "8px",
+                textDecoration: "none",
+                textAlign: "center",
+                cursor: "pointer",
+              }}
+            >
+              Login
+            </Link>
+          </div>
+        </div>
       </div>
     </main>
   );

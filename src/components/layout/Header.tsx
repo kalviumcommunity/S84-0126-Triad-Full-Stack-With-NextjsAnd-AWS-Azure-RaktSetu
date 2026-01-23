@@ -3,13 +3,28 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="w-full bg-red-600 text-white px-6 py-3 flex justify-between items-center">
-      <h1 className="text-lg font-semibold">RaktSetu</h1>
+    <header className="w-full bg-white px-10 py-4 flex justify-between items-center shadow-sm">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 bg-red-500 rounded-full"></div>
+        <span className="font-bold text-gray-800">RaktSetu</span>
+      </div>
 
-      <nav className="flex gap-4">
-        <Link href="/">Home</Link>
-        <Link href="/dashboard">Dashboard</Link>
-        <Link href="/users">Users</Link>
+      <nav className="flex gap-8 text-sm text-gray-600">
+        <Link href="/" className="hover:text-red-500">
+          Home
+        </Link>
+        <Link href="/dashboard" className="hover:text-red-500">
+          Dashboard
+        </Link>
+        <Link href="/users" className="hover:text-red-500">
+          Users
+        </Link>
+        <Link
+          href="/login"
+          className="bg-red-500 text-white px-4 py-2 rounded-full text-xs"
+        >
+          Login
+        </Link>
       </nav>
     </header>
   );
