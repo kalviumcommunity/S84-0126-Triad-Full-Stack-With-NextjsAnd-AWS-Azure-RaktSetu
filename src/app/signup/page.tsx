@@ -11,7 +11,6 @@ export default function SignupPage() {
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Signup Data:", { name, email, password });
     alert("Signup submitted (backend will be connected later)");
   };
 
