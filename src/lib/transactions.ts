@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-
 export async function createUserWithProfile() {
   try {
     const result = await prisma.$transaction(
@@ -17,6 +16,7 @@ export async function createUserWithProfile() {
         await tx.profile.create({
           data: {
             userId: user.id,
+            bio: "",
           },
         });
 
