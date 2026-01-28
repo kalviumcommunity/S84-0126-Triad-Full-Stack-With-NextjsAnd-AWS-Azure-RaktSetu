@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-
 import { prisma } from "@/lib/prisma";
+import { ERROR_CODES } from "@/lib/errorCodes";
+import { sendError, sendSuccess } from "@/lib/responseHandler";
 
 export async function GET() {
   try {
@@ -8,9 +8,9 @@ export async function GET() {
       orderBy: { id: "asc" },
     });
 
-    return NextResponse.json(projects);
+    return sendSuccess(projects);
   } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
 
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
           : NaN;
 
     if (!title || !Number.isFinite(userId) || userId <= 0) {
-      return NextResponse.json({ message: "Invalid input" }, { status: 400 });
+      return sendError("Invalid input", ERROR_CODES.VALIDATION_ERROR, 400);
     }
 
     const user = await prisma.user.findUnique({
@@ -39,17 +39,14 @@ export async function POST(req: Request) {
       select: { id: true },
     });
     if (!user)
-      return NextResponse.json(
-        { message: "Resource not found" },
-        { status: 404 }
-      );
+      return sendError("Resource not found", ERROR_CODES.NOT_FOUND, 404);
 
     const created = await prisma.project.create({
       data: { title, userId },
     });
 
-    return NextResponse.json(created, { status: 201 });
+    return sendSuccess(created, "Success", 201);
   } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }

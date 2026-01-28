@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-
 import { prisma } from "@/lib/prisma";
+import { ERROR_CODES } from "@/lib/errorCodes";
+import { sendError, sendSuccess } from "@/lib/responseHandler";
 
 export async function GET() {
   try {
@@ -9,9 +9,9 @@ export async function GET() {
       orderBy: { id: "asc" },
     });
 
-    return NextResponse.json(users);
+    return sendSuccess(users);
   } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
 
@@ -33,9 +33,10 @@ export async function POST(req: Request) {
         : "";
 
     if (!name || !email || !password) {
-      return NextResponse.json(
-        { message: "Missing required fields" },
-        { status: 400 }
+      return sendError(
+        "Missing required fields",
+        ERROR_CODES.VALIDATION_ERROR,
+        400
       );
     }
 
@@ -44,8 +45,8 @@ export async function POST(req: Request) {
       select: { id: true, name: true, email: true },
     });
 
-    return NextResponse.json(created, { status: 201 });
+    return sendSuccess(created, "Success", 201);
   } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
