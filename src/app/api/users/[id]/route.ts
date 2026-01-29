@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
+import { ERROR_CODES } from "@/lib/errorCodes";
+import { sendError, sendSuccess } from "@/lib/responseHandler";
+import { updateUserSchema } from "@/lib/schemas/userSchema";
+import { ZodError } from "zod";
 
 function parseId(value: string) {
   const id = Number.parseInt(value, 10);
@@ -42,31 +46,34 @@ export async function PUT(
     const { id: rawId } = await params;
     const id = parseId(rawId);
     if (!id)
-      return NextResponse.json({ message: "Invalid input" }, { status: 400 });
+      return sendError("Invalid input", ERROR_CODES.VALIDATION_ERROR, 400);
 
     const body: unknown = await req.json();
+    const parsed = updateUserSchema.safeParse(body);
+    if (!parsed.success) {
+      return sendError(
+        "Invalid input",
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        parsed.error.flatten()
+      );
+    }
+
     const name =
-      typeof (body as { name?: unknown }).name === "string"
-        ? (body as { name: string }).name.trim()
+      typeof parsed.data.name === "string"
+        ? parsed.data.name.trim()
         : undefined;
     const email =
-      typeof (body as { email?: unknown }).email === "string"
-        ? (body as { email: string }).email.trim()
+      typeof parsed.data.email === "string"
+        ? parsed.data.email.trim()
         : undefined;
-
-    if (!name && !email) {
-      return NextResponse.json({ message: "Invalid input" }, { status: 400 });
-    }
 
     const existing = await prisma.user.findUnique({
       where: { id },
       select: { id: true },
     });
     if (!existing)
-      return NextResponse.json(
-        { message: "Resource not found" },
-        { status: 404 }
-      );
+      return sendError("Resource not found", ERROR_CODES.NOT_FOUND, 404);
 
     const updated = await prisma.user.update({
       where: { id },
@@ -74,9 +81,17 @@ export async function PUT(
       select: { id: true, name: true, email: true },
     });
 
-    return NextResponse.json(updated);
-  } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return sendSuccess(updated);
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return sendError(
+        "Invalid input",
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        err.flatten()
+      );
+    }
+    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
 

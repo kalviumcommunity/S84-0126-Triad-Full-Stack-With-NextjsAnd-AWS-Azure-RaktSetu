@@ -58,3 +58,45 @@ To ensure **no life is lost due to missing or delayed blood availability data**.
 ---
 
 🚧 *Project under active development*
+
+---
+
+## Input Validation with Zod
+
+Input validation ensures our API routes reject bad data early, preventing runtime errors and keeping database writes clean and predictable.
+
+### Where schemas live
+- `src/lib/schemas/` contains shared Zod schemas used by API routes (POST/PUT).
+
+### Example success response (global handler)
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": { "id": 1, "name": "Alice", "email": "alice@example.com" },
+  "timestamp": "2026-01-27T10:00:00.000Z"
+}
+```
+
+### Example validation error response (400)
+
+```json
+{
+  "success": false,
+  "message": "Invalid input",
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "details": {
+      "formErrors": [],
+      "fieldErrors": {
+        "email": ["Email must be a valid email address"]
+      }
+    }
+  },
+  "timestamp": "2026-01-27T10:00:00.000Z"
+}
+```
+
+### Maintainability note
+Keeping schemas centralized makes validation consistent across routes and easier to update as a team without duplicating checks in every API file.

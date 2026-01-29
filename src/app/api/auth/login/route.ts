@@ -1,15 +1,28 @@
-import { NextResponse } from "next/server";
+import { ERROR_CODES } from "@/lib/errorCodes";
+import { sendError, sendSuccess } from "@/lib/responseHandler";
+import { loginSchema } from "@/lib/schemas/authSchema";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const email = typeof body.email === "string" ? body.email.trim() : "";
-    const password = typeof body.password === "string" ? body.password : "";
+    const body: unknown = await req.json();
+    const parsed = loginSchema.safeParse(body);
+    if (!parsed.success) {
+      return sendError(
+        "Invalid input",
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        parsed.error.flatten()
+      );
+    }
+
+    const email = parsed.data.email.trim();
+    const password = parsed.data.password;
 
     if (!email || !email.includes("@") || password.length < 6) {
-      return NextResponse.json(
-        { message: "Invalid credentials" },
-        { status: 400 }
+      return sendError(
+        "Invalid credentials",
+        ERROR_CODES.VALIDATION_ERROR,
+        400
       );
     }
 
@@ -17,8 +30,8 @@ export async function POST(req: Request) {
     // Replace with real DB lookup / password check in production.
     const token = "mock.jwt.token";
 
-    return NextResponse.json({ token });
-  } catch (err) {
-    return NextResponse.json({ message: "Bad request" }, { status: 400 });
+    return sendSuccess({ token });
+  } catch {
+    return sendError("Bad request", ERROR_CODES.VALIDATION_ERROR, 400);
   }
 }
