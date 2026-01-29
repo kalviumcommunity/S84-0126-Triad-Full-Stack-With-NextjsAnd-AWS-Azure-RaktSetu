@@ -1,17 +1,14 @@
-import { NextResponse } from "next/server";
-
 import { prisma } from "@/lib/prisma";
+import { ERROR_CODES } from "@/lib/errorCodes";
+import { sendError, sendSuccess } from "@/lib/responseHandler";
+import { createProfileSchema } from "@/lib/schemas/profileSchema";
+import { ZodError } from "zod";
 
 export async function POST(req: Request) {
   try {
     const body: unknown = await req.json();
 
     const userIdRaw = (body as { userId?: unknown }).userId;
-    const bio =
-      typeof (body as { bio?: unknown }).bio === "string"
-        ? (body as { bio: string }).bio.trim()
-        : "";
-
     const userId =
       typeof userIdRaw === "number"
         ? userIdRaw
@@ -19,33 +16,53 @@ export async function POST(req: Request) {
           ? Number.parseInt(userIdRaw, 10)
           : NaN;
 
-    if (!Number.isFinite(userId) || userId <= 0 || !bio) {
-      return NextResponse.json({ message: "Invalid input" }, { status: 400 });
+    const parsed = createProfileSchema.safeParse({
+      userId,
+      bio:
+        typeof (body as { bio?: unknown }).bio === "string"
+          ? (body as { bio: string }).bio.trim()
+          : "",
+    });
+
+    if (!parsed.success) {
+      return sendError(
+        "Invalid input",
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        parsed.error.flatten()
+      );
     }
+
+    const bio = parsed.data.bio;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { id: true },
     });
     if (!user)
-      return NextResponse.json(
-        { message: "Resource not found" },
-        { status: 404 }
-      );
+      return sendError("Resource not found", ERROR_CODES.NOT_FOUND, 404);
 
     const existingProfile = await prisma.profile.findUnique({
       where: { userId },
     });
     if (existingProfile) {
-      return NextResponse.json({ message: "Invalid input" }, { status: 400 });
+      return sendError("Invalid input", ERROR_CODES.VALIDATION_ERROR, 400);
     }
 
     const created = await prisma.profile.create({
       data: { userId, bio },
     });
 
-    return NextResponse.json(created, { status: 201 });
-  } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return sendSuccess(created, "Success", 201);
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return sendError(
+        "Invalid input",
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        err.flatten()
+      );
+    }
+    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }

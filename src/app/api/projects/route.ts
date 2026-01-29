@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
+import { createProjectSchema } from "@/lib/schemas/projectSchema";
+import { ZodError } from "zod";
 
 export async function GET() {
   try {
@@ -18,10 +20,6 @@ export async function POST(req: Request) {
   try {
     const body: unknown = await req.json();
 
-    const title =
-      typeof (body as { title?: unknown }).title === "string"
-        ? (body as { title: string }).title.trim()
-        : "";
     const userIdRaw = (body as { userId?: unknown }).userId;
     const userId =
       typeof userIdRaw === "number"
@@ -30,9 +28,24 @@ export async function POST(req: Request) {
           ? Number.parseInt(userIdRaw, 10)
           : NaN;
 
-    if (!title || !Number.isFinite(userId) || userId <= 0) {
-      return sendError("Invalid input", ERROR_CODES.VALIDATION_ERROR, 400);
+    const parsed = createProjectSchema.safeParse({
+      title:
+        typeof (body as { title?: unknown }).title === "string"
+          ? (body as { title: string }).title.trim()
+          : "",
+      userId,
+    });
+
+    if (!parsed.success) {
+      return sendError(
+        "Invalid input",
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        parsed.error.flatten()
+      );
     }
+
+    const title = parsed.data.title;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -46,7 +59,15 @@ export async function POST(req: Request) {
     });
 
     return sendSuccess(created, "Success", 201);
-  } catch {
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return sendError(
+        "Invalid input",
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        err.flatten()
+      );
+    }
     return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
