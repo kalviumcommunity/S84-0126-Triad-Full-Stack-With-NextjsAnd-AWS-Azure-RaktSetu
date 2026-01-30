@@ -100,3 +100,68 @@ Input validation ensures our API routes reject bad data early, preventing runtim
 
 ### Maintainability note
 Keeping schemas centralized makes validation consistent across routes and easier to update as a team without duplicating checks in every API file.
+
+---
+
+## Authentication APIs (Signup / Login)
+
+### Signup flow (`POST /api/auth/signup`)
+- Validates `name`, `email`, `password` using Zod
+- Checks for duplicate email
+- Hashes password using bcrypt (salt rounds = 10)
+- Stores the hashed password in the database
+- Returns the created user **without** the password
+
+Sample request:
+
+```json
+{ "name": "Alice", "email": "alice@example.com", "password": "password123" }
+```
+
+Sample success response:
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": { "id": 1, "name": "Alice", "email": "alice@example.com" },
+  "timestamp": "2026-01-27T10:00:00.000Z"
+}
+```
+
+### Login flow (`POST /api/auth/login`)
+- Validates `email` and `password` using Zod
+- Checks if the user exists
+- Compares password with bcrypt
+- On success, generates a JWT token (payload: user `id` + `email`)
+- Token expiry is **1 hour**
+
+Sample request:
+
+```json
+{ "email": "alice@example.com", "password": "password123" }
+```
+
+Sample success response:
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": { "token": "<jwt-token>" },
+  "timestamp": "2026-01-27T10:00:00.000Z"
+}
+```
+
+### JWT expiry (1 hour)
+The token is signed with `process.env.JWT_SECRET` and expires in **1 hour**. After expiry, the client must log in again to get a new token.
+
+### Token storage (cookies vs localStorage)
+- Cookies (HttpOnly) are safer against XSS and are commonly used for auth tokens.
+- localStorage is simpler for demos but can be accessed by injected scripts if XSS exists.
+
+### Password hashing
+Passwords are never stored in plain text. We hash passwords using bcrypt so even if the database is exposed, raw passwords are not directly readable.
+
+### Maintainability reflection
+Keeping validation + auth logic consistent (Zod + global response handler + clear status codes) makes it easier for a team to extend endpoints without breaking API behavior.

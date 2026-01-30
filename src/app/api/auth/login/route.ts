@@ -1,6 +1,9 @@
 import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
 import { loginSchema } from "@/lib/schemas/authSchema";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
   try {
@@ -18,17 +21,30 @@ export async function POST(req: Request) {
     const email = parsed.data.email.trim();
     const password = parsed.data.password;
 
-    if (!email || !email.includes("@") || password.length < 6) {
-      return sendError(
-        "Invalid credentials",
-        ERROR_CODES.VALIDATION_ERROR,
-        400
-      );
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, password: true },
+    });
+
+    if (!user) {
+      return sendError("User not found", ERROR_CODES.NOT_FOUND, 404);
     }
 
-    // NOTE: This is a mock authentication for demo purposes.
-    // Replace with real DB lookup / password check in production.
-    const token = "mock.jwt.token";
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return sendError("Invalid password", "INVALID_PASSWORD", 401);
+    }
+
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500, {
+        missing: "JWT_SECRET",
+      });
+    }
+
+    const token = jwt.sign({ id: user.id, email: user.email }, secret, {
+      expiresIn: "1h",
+    });
 
     return sendSuccess({ token });
   } catch {
