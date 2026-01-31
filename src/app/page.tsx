@@ -1,3 +1,5 @@
+"use client";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/navbar";
 import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
@@ -5,6 +7,8 @@ import RolesSection from "@/components/RolesSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <main
       style={{
@@ -76,6 +80,7 @@ export default function Home() {
           {/* Buttons */}
           <div style={{ display: "flex", gap: "16px", marginBottom: "48px" }}>
             <button
+              onClick={() => router.push("/signup")}
               style={{
                 backgroundColor: "#dc2626",
                 color: "white",
@@ -91,6 +96,7 @@ export default function Home() {
             </button>
 
             <button
+              onClick={() => router.push("/login")}
               style={{
                 backgroundColor: "transparent",
                 color: "#dc2626",

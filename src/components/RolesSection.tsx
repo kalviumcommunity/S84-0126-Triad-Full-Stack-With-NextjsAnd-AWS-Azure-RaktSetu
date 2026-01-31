@@ -1,5 +1,9 @@
 "use client";
+import { useRouter } from "next/navigation";
+
 export default function RolesSection() {
+  const router = useRouter();
+
   return (
     <section
       id="roles"
@@ -21,18 +25,21 @@ export default function RolesSection() {
           icon="👤"
           title="For Donors"
           text="Schedule donations, track your impact, and earn recognition badges for your life-saving contributions."
+          onDonateNow={() => router.push("/login")}
         />
 
         <RoleCard
           icon="🏥"
           title="For Hospitals"
           text="Manage blood inventory, send urgent requests, and connect with a network of verified donors."
+          onDonateNow={() => router.push("/login")}
         />
 
         <RoleCard
           icon="❤️"
           title="For NGOs"
           text="Organize donation camps, coordinate volunteer networks, and maximize community impact."
+          onDonateNow={() => router.push("/login")}
         />
       </div>
     </section>
@@ -43,10 +50,12 @@ function RoleCard({
   icon,
   title,
   text,
+  onDonateNow,
 }: {
   icon: string;
   title: string;
   text: string;
+  onDonateNow: () => void;
 }) {
   return (
     <div
@@ -58,6 +67,8 @@ function RoleCard({
         boxShadow: "0 25px 50px rgba(220,38,38,0.25)",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-8px)";
@@ -88,7 +99,39 @@ function RoleCard({
         {title}
       </h3>
 
-      <p style={{ lineHeight: 1.6, color: "rgba(255,255,255,0.9)" }}>{text}</p>
+      <p
+        style={{
+          lineHeight: 1.6,
+          color: "rgba(255,255,255,0.9)",
+          marginBottom: "20px",
+          flex: 1,
+        }}
+      >
+        {text}
+      </p>
+
+      <button
+        onClick={onDonateNow}
+        style={{
+          backgroundColor: "rgba(255,255,255,0.2)",
+          color: "white",
+          padding: "10px 20px",
+          borderRadius: "8px",
+          border: "1px solid rgba(255,255,255,0.3)",
+          fontSize: "14px",
+          fontWeight: 600,
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.3)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.2)";
+        }}
+      >
+        Donate Now
+      </button>
     </div>
   );
 }

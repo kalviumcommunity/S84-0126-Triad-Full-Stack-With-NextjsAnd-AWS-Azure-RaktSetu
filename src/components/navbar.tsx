@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   return (
@@ -27,9 +28,15 @@ export default function Navbar() {
             fontWeight: "bold",
           }}
         >
-          🩸
+          <Image
+            src="/blood-donate.png"
+            alt="Logo"
+            width={200}
+            height={200}
+            className="object-contain"
+          />
         </div>
-        <span style={{ fontWeight: 700, color: "#000000", fontSize: "18px" }}>
+        <span style={{ fontWeight: 700, color: "#000000", fontSize: "20px" }}>
           Raktsetu
         </span>
       </div>
@@ -65,7 +72,7 @@ export default function Navbar() {
             fontWeight: 600,
           }}
         >
-          Donate Now
+          <Link href="/login">Donate Now</Link>
         </button>
       </div>
     </header>

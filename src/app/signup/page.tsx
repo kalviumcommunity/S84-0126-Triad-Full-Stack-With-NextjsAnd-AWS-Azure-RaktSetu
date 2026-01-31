@@ -1,108 +1,68 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
+import AuthLayout from "@/components/AuthLayout";
 
 export default function SignupPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    alert("Signup submitted (backend will be connected later)");
-  };
-
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#f9fafb",
-      }}
-    >
-      <form
-        onSubmit={handleSignup}
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          background: "white",
-          padding: "32px",
-          borderRadius: "12px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h1 style={{ fontSize: "28px", marginBottom: "8px", color: "#e11d48" }}>
-          Sign Up
-        </h1>
-
-        <p style={{ marginBottom: "24px", color: "#6b7280" }}>
-          Create your RaktSetu account
+    <AuthLayout>
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm">
+        <h2 className="text-2xl font-bold text-center mb-2 text-black">
+          Join Raktsetu
+        </h2>
+        <p className="text-center text-gray-500 mb-6">
+          Create an account to start saving lives
         </p>
 
-        {/* Name */}
-        <label>Name</label>
-        <input
-          type="text"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={inputStyle}
-        />
+        <form className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-black">Full Name</label>
+            <input
+              type="text"
+              placeholder="Enter your full name"
+              className="w-full mt-1 px-4 py-3 border rounded-lg text-black
+                        placeholder-gray-300
+                        focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
 
-        {/* Email */}
-        <label>Email</label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={inputStyle}
-        />
+          <div>
+            <label className="text-sm font-medium text-black">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
 
-        {/* Password */}
-        <label>Password</label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={inputStyle}
-        />
+          <div>
+            <label className="text-sm font-medium text-black">Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
 
-        <button type="submit" style={primaryButton}>
-          Create Account
-        </button>
+          <button
+            type="submit"
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition"
+          >
+            Create Account →
+          </button>
+        </form>
 
-        <p style={{ marginTop: "16px", textAlign: "center" }}>
+        <p className="text-center text-sm text-gray-600 mt-6">
           Already have an account?{" "}
-          <Link href="/login" style={{ color: "#e11d48" }}>
-            Login
+          <Link href="/login" className="text-red-600 font-medium">
+            Sign in
           </Link>
         </p>
-      </form>
-    </main>
+
+        <p className="text-xs text-gray-400 text-center mt-6">
+          By continuing, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
+    </AuthLayout>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginTop: "6px",
-  marginBottom: "16px",
-  borderRadius: "6px",
-  border: "1px solid #d1d5db",
-};
-
-const primaryButton = {
-  width: "100%",
-  backgroundColor: "#e11d48",
-  color: "white",
-  padding: "12px",
-  borderRadius: "8px",
-  border: "none",
-  cursor: "pointer",
-};
