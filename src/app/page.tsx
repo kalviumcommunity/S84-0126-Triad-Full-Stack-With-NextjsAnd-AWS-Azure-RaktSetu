@@ -1,4 +1,6 @@
 "use client";
+import { useAuth } from "@/hooks/useAuth";
+import { useUI } from "@/hooks/useUI";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/navbar";
 import HowItWorks from "@/components/HowItWorks";
@@ -9,11 +11,19 @@ import Footer from "@/components/Footer";
 export default function Home() {
   const router = useRouter();
 
+  // 🌍 Global Context Values
+  const { user, isAuthenticated, logout } = useAuth();
+  const { theme, toggleTheme } = useUI();
+
+  const isDark = theme === "dark";
+
   return (
     <main
       style={{
         minHeight: "100vh",
-        background: "#ffffff",
+        background: isDark ? "#0f172a" : "#ffffff",
+        color: isDark ? "#ffffff" : "#000000",
+        transition: "all 0.3s ease",
       }}
     >
       <Navbar />
@@ -55,7 +65,7 @@ export default function Home() {
               fontWeight: 800,
               lineHeight: 1.1,
               marginBottom: "24px",
-              color: "#000000",
+              color: isDark ? "#ffffff" : "#000000",
             }}
           >
             Connecting <span style={{ color: "#dc2626" }}>Lives</span>
@@ -68,59 +78,74 @@ export default function Home() {
             style={{
               maxWidth: "600px",
               fontSize: "18px",
-              color: "#4b5563",
+              color: isDark ? "#cbd5e1" : "#4b5563",
               marginBottom: "32px",
             }}
           >
-            Raktsetu is India&apos; real-time blood donation platform,
+            Raktsetu is India&apos;s real-time blood donation platform,
             seamlessly connecting donors, hospitals, and NGOs to save lives when
             every second counts.
           </p>
 
           {/* Buttons */}
-          <div style={{ display: "flex", gap: "16px", marginBottom: "48px" }}>
-            <button
-              onClick={() => router.push("/signup")}
-              style={{
-                backgroundColor: "#dc2626",
-                color: "white",
-                padding: "14px 28px",
-                borderRadius: "12px",
-                border: "none",
-                fontSize: "16px",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              Register as Donor →
-            </button>
+          <div style={{ display: "flex", gap: "16px", marginBottom: "32px" }}>
+            {!isAuthenticated ? (
+              <>
+                <button
+                  onClick={() => router.push("/signup")}
+                  style={primaryBtn}
+                >
+                  Register as Donor →
+                </button>
 
-            <button
-              onClick={() => router.push("/login")}
-              style={{
-                backgroundColor: "transparent",
-                color: "#dc2626",
-                padding: "14px 28px",
-                borderRadius: "12px",
-                border: "2px solid #dc2626",
-                fontSize: "16px",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              Request Blood
-            </button>
+                <button
+                  onClick={() => router.push("/login")}
+                  style={secondaryBtn}
+                >
+                  Request Blood
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  style={primaryBtn}
+                >
+                  Go to Dashboard
+                </button>
+
+                <button onClick={logout} style={secondaryBtn}>
+                  Logout ({user})
+                </button>
+              </>
+            )}
           </div>
 
+          {/* Theme Toggle (Assignment Requirement) */}
+          <button
+            onClick={toggleTheme}
+            style={{
+              marginBottom: "40px",
+              padding: "10px 18px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              cursor: "pointer",
+              background: isDark ? "#1e293b" : "#f3f4f6",
+              color: isDark ? "#fff" : "#000",
+            }}
+          >
+            Toggle {isDark ? "Light" : "Dark"} Mode
+          </button>
+
           {/* Stats */}
-          <div style={{ display: "flex", color: "#000000", gap: "40px" }}>
+          <div style={{ display: "flex", gap: "40px" }}>
             <Stat value="50K+" label="Active Donors" />
             <Stat value="500+" label="Partner Hospitals" />
             <Stat value="100K+" label="Lives Saved" />
           </div>
         </div>
 
-        {/* RIGHT GRADIENT / IMAGE */}
+        {/* RIGHT IMAGE */}
         <div
           style={{
             flex: 1,
@@ -133,6 +158,7 @@ export default function Home() {
           }}
         />
       </section>
+
       <HowItWorks />
       <Features />
       <RolesSection />
@@ -140,6 +166,28 @@ export default function Home() {
     </main>
   );
 }
+
+const primaryBtn: React.CSSProperties = {
+  backgroundColor: "#dc2626",
+  color: "white",
+  padding: "14px 28px",
+  borderRadius: "12px",
+  border: "none",
+  fontSize: "16px",
+  fontWeight: 600,
+  cursor: "pointer",
+};
+
+const secondaryBtn: React.CSSProperties = {
+  backgroundColor: "transparent",
+  color: "#dc2626",
+  padding: "14px 28px",
+  borderRadius: "12px",
+  border: "2px solid #dc2626",
+  fontSize: "16px",
+  fontWeight: 600,
+  cursor: "pointer",
+};
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
