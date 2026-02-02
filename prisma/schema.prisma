@@ -13,6 +13,7 @@ model User {
   email     String    @unique
   createdAt DateTime  @default(now())
   password  String
+  role      String    @default("user")
   profile   Profile?
   projects  Project[]
 }

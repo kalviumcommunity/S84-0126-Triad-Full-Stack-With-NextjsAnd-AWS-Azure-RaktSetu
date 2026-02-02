@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { id: true, email: true, password: true },
+      select: { id: true, email: true, password: true, role: true },
     });
 
     if (!user) {
@@ -42,9 +42,13 @@ export async function POST(req: Request) {
       });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, secret, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      secret,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     return sendSuccess({ token });
   } catch {

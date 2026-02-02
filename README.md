@@ -133,7 +133,7 @@ Sample success response:
 - Validates `email` and `password` using Zod
 - Checks if the user exists
 - Compares password with bcrypt
-- On success, generates a JWT token (payload: user `id` + `email`)
+- On success, generates a JWT token (payload: user `id`, `email`, and `role`)
 - Token expiry is **1 hour**
 
 Sample request:
@@ -177,3 +177,108 @@ Metrics Impact:
 - MTTD reduced by immediate health checks
 - MTTR reduced by rollback automation
 - CFR reduced by blocking bad deployments
+
+---
+
+## Authorization Middleware (RBAC)
+
+The authorization middleware enforces role-based access control (RBAC) for protected API routes, ensuring that only authenticated users with appropriate permissions can access sensitive endpoints.
+
+### Flow explanation: request → middleware → route
+
+1. **Request arrives**: Client sends a request to `/api/users` or `/api/admin` with an `Authorization` header containing a Bearer token.
+2. **Middleware intercepts**: The Next.js middleware (`middleware.ts`) intercepts the request before it reaches the route handler.
+3. **Token verification**: Middleware extracts the token from the `Authorization` header and verifies it using `JWT_SECRET`.
+4. **Role-based authorization**: Based on the decoded token's role, middleware either:
+   - Allows the request to proceed (attaching user info to headers)
+   - Returns a 401 (missing token) or 403 (invalid token / insufficient permissions)
+5. **Route handler executes**: If authorized, the request reaches the route handler with user information available via headers (`x-user-email`, `x-user-role`).
+
+### JWT verification explanation
+
+The middleware uses `jsonwebtoken` to verify tokens:
+- **Token extraction**: Reads `Authorization: Bearer <token>` header
+- **Secret verification**: Uses `process.env.JWT_SECRET` to verify token signature
+- **Expiry check**: Automatically rejects expired tokens (JWT library handles this)
+- **Payload extraction**: Decodes user `id`, `email`, and `role` from the token
+
+### Role-based access rules
+
+| Route | Required Role | Description |
+|-------|--------------|-------------|
+| `/api/users` | Any authenticated user (`user` or `admin`) | Accessible to all logged-in users |
+| `/api/admin` | `admin` only | Restricted to users with admin role |
+
+**Access denied scenarios:**
+- Missing token → `401 UNAUTHORIZED`
+- Invalid/expired token → `403 FORBIDDEN`
+- Non-admin accessing `/api/admin` → `403 FORBIDDEN`
+
+### Least privilege principle
+
+The middleware implements the principle of least privilege:
+- Users only receive access to routes appropriate for their role
+- Default role is `user` (assigned during signup)
+- Admin routes require explicit `admin` role assignment
+- Each route handler receives only the minimum user information needed (email, role)
+
+### How new roles (editor/moderator) can be added
+
+To add new roles like `editor` or `moderator`:
+
+1. **Update Prisma schema** (if needed): Add role validation or enum if you want to restrict valid roles
+2. **Update middleware**: Add role checks for new protected routes:
+   ```typescript
+   if (pathname.startsWith("/api/editor")) {
+     if (decoded.role !== "editor" && decoded.role !== "admin") {
+       return NextResponse.json(/* 403 */);
+     }
+   }
+   ```
+3. **Update matcher config**: Add new routes to the middleware matcher:
+   ```typescript
+   export const config = {
+     matcher: [
+       "/api/users/:path*",
+       "/api/admin/:path*",
+       "/api/editor/:path*", // Add new route
+     ],
+   };
+   ```
+4. **Create route handlers**: Implement routes in `src/app/api/editor/route.ts`
+
+### Example allowed vs denied requests
+
+**✅ Allowed Request (User accessing `/api/users`):**
+```bash
+curl -X GET http://localhost:3000/api/users \
+  -H "Authorization: Bearer <valid-user-token>"
+```
+Response: `200 OK` with user list
+
+**✅ Allowed Request (Admin accessing `/api/admin`):**
+```bash
+curl -X GET http://localhost:3000/api/admin \
+  -H "Authorization: Bearer <valid-admin-token>"
+```
+Response: `200 OK` with admin dashboard data
+
+**❌ Denied Request (Missing token):**
+```bash
+curl -X GET http://localhost:3000/api/users
+```
+Response: `401 UNAUTHORIZED` - "Missing token"
+
+**❌ Denied Request (User accessing admin route):**
+```bash
+curl -X GET http://localhost:3000/api/admin \
+  -H "Authorization: Bearer <valid-user-token>"
+```
+Response: `403 FORBIDDEN` - "Access denied"
+
+**❌ Denied Request (Expired token):**
+```bash
+curl -X GET http://localhost:3000/api/users \
+  -H "Authorization: Bearer <expired-token>"
+```
+Response: `403 FORBIDDEN` - "Invalid or expired token"
