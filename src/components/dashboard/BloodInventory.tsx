@@ -19,7 +19,7 @@ export default function BloodInventory() {
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border">
-      <h3 className="text-xl font-semibold mb-1">Blood Inventory</h3>
+      <h3 className="text-xl font-semibold text-black mb-1">Blood Inventory</h3>
       <p className="text-gray-500 text-sm mb-6">Current stock by blood type</p>
 
       <div className="grid md:grid-cols-4 gap-5">

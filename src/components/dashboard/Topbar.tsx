@@ -4,8 +4,8 @@ export default function Topbar() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h2 className="text-2xl font-bold">Dashboard</h2>
-        <p className="text-gray-500 text-sm">Welcome back, Admin</p>
+        <h2 className="text-2xl text-black font-bold">Dashboard</h2>
+        <p className="text-gray-600 text-sm">Welcome back, Admin</p>
       </div>
 
       <div className="flex items-center gap-4">
@@ -14,11 +14,11 @@ export default function Topbar() {
           <input
             type="text"
             placeholder="Search donors, requests..."
-            className="outline-none w-full text-sm"
+            className="outline-none w-full text-gray-600 text-sm"
           />
         </div>
 
-        <button className="relative p-2 bg-white rounded-lg border">
+        <button className="relative p-2 bg-white text-gray-400 rounded-lg border">
           <Bell size={18} />
           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1 rounded-full">
             3
