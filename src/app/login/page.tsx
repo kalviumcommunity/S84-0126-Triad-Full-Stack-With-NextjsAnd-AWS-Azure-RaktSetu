@@ -1,7 +1,53 @@
+"use client";
+
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AuthLayout from "@/components/AuthLayout";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setMessage(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data?.success) {
+        setMessage(data?.message ?? "Login failed");
+        return;
+      }
+
+      const token: string | undefined = data?.data?.token;
+      if (token && typeof window !== "undefined") {
+        // Store JWT for protected API calls
+        window.localStorage.setItem("token", token);
+      }
+
+      setMessage("Login successful. Redirecting...");
+      router.push("/dashboard");
+    } catch {
+      setMessage("Something went wrong while logging in.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <AuthLayout>
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm">
@@ -12,7 +58,7 @@ export default function LoginPage() {
           Sign in to continue your journey
         </p>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="text-sm font-medium text-black">
               Email Address
@@ -21,6 +67,9 @@ export default function LoginPage() {
               type="email"
               placeholder="Enter your email"
               className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -29,15 +78,23 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Enter your password"
-              className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 ocus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
 
+          {message && (
+            <p className="text-sm text-center text-red-600">{message}</p>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition"
+            disabled={loading}
+            className="w-full bg-red-600 hover:bg-red-700 disabled:opacity-70 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition"
           >
-            Sign In →
+            {loading ? "Signing In..." : "Sign In \u2192"}
           </button>
         </form>
 

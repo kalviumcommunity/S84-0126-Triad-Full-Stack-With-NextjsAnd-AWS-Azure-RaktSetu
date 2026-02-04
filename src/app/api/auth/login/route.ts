@@ -2,7 +2,7 @@ import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
 import { loginSchema } from "@/lib/schemas/authSchema";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { handleError } from "@/lib/errorHandler";
 

@@ -1,7 +1,48 @@
+"use client";
+
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AuthLayout from "@/components/AuthLayout";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setMessage(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data?.success) {
+        setMessage(data?.message ?? "Signup failed");
+        return;
+      }
+
+      setMessage("Signup successful. You can now log in.");
+      router.push("/login");
+    } catch {
+      setMessage("Something went wrong while signing up.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <AuthLayout>
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm">
@@ -12,15 +53,16 @@ export default function SignupPage() {
           Create an account to start saving lives
         </p>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="text-sm font-medium text-black">Full Name</label>
             <input
               type="text"
               placeholder="Enter your full name"
-              className="w-full mt-1 px-4 py-3 border rounded-lg text-black
-                        placeholder-gray-300
-                        focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
             />
           </div>
 
@@ -32,6 +74,9 @@ export default function SignupPage() {
               type="email"
               placeholder="Enter your email"
               className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -41,14 +86,22 @@ export default function SignupPage() {
               type="password"
               placeholder="Enter your password"
               className="w-full mt-1 px-4 py-3 border rounded-lg text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
 
+          {message && (
+            <p className="text-sm text-center text-red-600">{message}</p>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition"
+            disabled={loading}
+            className="w-full bg-red-600 hover:bg-red-700 disabled:opacity-70 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition"
           >
-            Create Account →
+            {loading ? "Creating Account..." : "Create Account \u2192"}
           </button>
         </form>
 
