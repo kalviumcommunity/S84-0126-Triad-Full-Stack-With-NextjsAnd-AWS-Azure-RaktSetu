@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
+import { handleError } from "@/lib/errorHandler";
 
 function parseId(value: string) {
   const id = Number.parseInt(value, 10);
@@ -25,8 +26,8 @@ export async function GET(
       );
 
     return NextResponse.json(project);
-  } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error) {
+    return handleError(error, "GET /api/projects/[id]");
   }
 }
 
@@ -52,7 +53,7 @@ export async function DELETE(
 
     await prisma.project.delete({ where: { id } });
     return NextResponse.json({ message: "Deleted" });
-  } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error) {
+    return handleError(error, "DELETE /api/projects/[id]");
   }
 }

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
 import { headers } from "next/headers";
+import { handleError } from "@/lib/errorHandler";
 
 export async function GET() {
   try {
@@ -28,7 +29,7 @@ export async function GET() {
         regularUsers: totalUsers - adminUsers,
       },
     });
-  } catch {
-    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
+  } catch (error) {
+    return handleError(error, "GET /api/admin");
   }
 }

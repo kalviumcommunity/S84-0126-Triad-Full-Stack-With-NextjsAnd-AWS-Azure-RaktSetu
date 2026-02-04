@@ -5,6 +5,7 @@ import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
 import { updateUserSchema } from "@/lib/schemas/userSchema";
 import { ZodError } from "zod";
+import { handleError } from "@/lib/errorHandler";
 
 function parseId(value: string) {
   const id = Number.parseInt(value, 10);
@@ -33,8 +34,8 @@ export async function GET(
       );
 
     return NextResponse.json(user);
-  } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error) {
+    return handleError(error, "GET /api/users/[id]");
   }
 }
 
@@ -91,7 +92,7 @@ export async function PUT(
         err.flatten()
       );
     }
-    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
+    return handleError(err, "PUT /api/users/[id]");
   }
 }
 
@@ -117,7 +118,7 @@ export async function DELETE(
 
     await prisma.user.delete({ where: { id } });
     return NextResponse.json({ message: "Deleted" });
-  } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error) {
+    return handleError(error, "DELETE /api/users/[id]");
   }
 }

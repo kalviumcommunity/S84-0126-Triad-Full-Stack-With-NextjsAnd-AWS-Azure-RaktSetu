@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
 import { signupSchema } from "@/lib/schemas/authSchema";
+import { handleError } from "@/lib/errorHandler";
 
 export async function POST(req: Request) {
   try {
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     });
 
     return sendSuccess(created, "Success", 201);
-  } catch {
-    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
+  } catch (error) {
+    return handleError(error, "POST /api/auth/signup");
   }
 }

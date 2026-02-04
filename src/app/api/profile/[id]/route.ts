@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
+import { handleError } from "@/lib/errorHandler";
 
 function parseId(value: string) {
   const id = Number.parseInt(value, 10);
@@ -28,7 +29,7 @@ export async function GET(
       );
 
     return NextResponse.json(profile);
-  } catch {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error) {
+    return handleError(error, "GET /api/profile/[id]");
   }
 }

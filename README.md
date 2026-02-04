@@ -282,3 +282,129 @@ curl -X GET http://localhost:3000/api/users \
   -H "Authorization: Bearer <expired-token>"
 ```
 Response: `403 FORBIDDEN` - "Invalid or expired token"
+
+---
+
+## Error Handling Middleware
+
+Centralized error handling ensures consistent error responses across all API routes, improves debugging capabilities through structured logging, and protects sensitive information in production environments.
+
+### Why centralized error handling is important
+
+- **Consistency**: All errors follow the same response format, making API consumption predictable
+- **Security**: Prevents accidental exposure of stack traces, database errors, or internal implementation details to clients
+- **Debugging**: Structured logs with context help developers quickly identify and fix issues
+- **Maintainability**: Single source of truth for error handling logic reduces code duplication
+
+### Difference between dev vs prod behavior
+
+**Development (`NODE_ENV=development`):**
+- Returns detailed error messages and stack traces
+- Helps developers debug issues quickly
+- Example response:
+```json
+{
+  "success": false,
+  "message": "Database connection failed",
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "details": {
+      "name": "Error",
+      "stack": "Error: Database connection failed\n    at ..."
+    }
+  },
+  "timestamp": "2026-02-02T10:00:00.000Z"
+}
+```
+
+**Production (`NODE_ENV=production`):**
+- Returns generic user-safe messages
+- No stack traces or internal details exposed
+- Example response:
+```json
+{
+  "success": false,
+  "message": "An internal server error occurred. Please try again later.",
+  "error": {
+    "code": "INTERNAL_ERROR"
+  },
+  "timestamp": "2026-02-02T10:00:00.000Z"
+}
+```
+
+### How structured logs help debugging
+
+Structured JSON logs include:
+- **Level**: `info` or `error`
+- **Message**: Human-readable error description
+- **Meta**: Additional context (route, method, error name, stack trace)
+- **Timestamp**: ISO 8601 formatted timestamp
+
+Example log entry:
+```json
+{
+  "level": "error",
+  "message": "Database connection failed",
+  "route": "GET /api/users",
+  "errorName": "PrismaClientInitializationError",
+  "stack": "Error: ...",
+  "timestamp": "2026-02-02T10:00:00.000Z"
+}
+```
+
+These logs can be easily parsed by log aggregation tools (e.g., ELK stack, Datadog, CloudWatch) for monitoring and alerting.
+
+### Implementation
+
+**Logger utility (`src/lib/logger.ts`):**
+```typescript
+export const logger = {
+  info(message: string, meta?: Record<string, unknown>): void {
+    const logEntry = formatLog("info", message, meta);
+    console.log(JSON.stringify(logEntry));
+  },
+
+  error(message: string, meta?: Record<string, unknown>): void {
+    const logEntry = formatLog("error", message, meta);
+    console.error(JSON.stringify(logEntry));
+  },
+};
+```
+
+**Error handler (`src/lib/errorHandler.ts`):**
+```typescript
+export function handleError(
+  error: unknown,
+  context: string | ErrorContext = "Unknown"
+): NextResponse {
+  const isDevelopment = process.env.NODE_ENV === "development";
+  
+  // Log full error details internally
+  logger.error(errorMessage, { route: context, stack: errorStack });
+  
+  // Return environment-appropriate response
+  if (isDevelopment) {
+    return NextResponse.json({ /* detailed error */ }, { status: 500 });
+  }
+  return NextResponse.json({ /* generic error */ }, { status: 500 });
+}
+```
+
+**Usage in API routes:**
+```typescript
+export async function GET() {
+  try {
+    // Route logic
+    return sendSuccess(data);
+  } catch (error) {
+    return handleError(error, "GET /api/users");
+  }
+}
+```
+
+### Best practices
+
+- Always use `handleError()` in catch blocks for unexpected errors
+- Validation errors (ZodError) should still use `sendError()` with appropriate status codes
+- Provide meaningful context strings (e.g., "GET /api/users") for better log traceability
+- Never expose database errors, API keys, or internal paths in production responses

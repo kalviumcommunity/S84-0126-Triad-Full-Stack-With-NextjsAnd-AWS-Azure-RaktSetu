@@ -3,6 +3,7 @@ import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
 import { createProfileSchema } from "@/lib/schemas/profileSchema";
 import { ZodError } from "zod";
+import { handleError } from "@/lib/errorHandler";
 
 export async function POST(req: Request) {
   try {
@@ -63,6 +64,6 @@ export async function POST(req: Request) {
         err.flatten()
       );
     }
-    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
+    return handleError(err, "POST /api/profile");
   }
 }

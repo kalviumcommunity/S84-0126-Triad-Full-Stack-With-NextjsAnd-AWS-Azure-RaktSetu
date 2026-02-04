@@ -4,6 +4,7 @@ import { loginSchema } from "@/lib/schemas/authSchema";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { handleError } from "@/lib/errorHandler";
 
 export async function POST(req: Request) {
   try {
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
     );
 
     return sendSuccess({ token });
-  } catch {
-    return sendError("Bad request", ERROR_CODES.VALIDATION_ERROR, 400);
+  } catch (error) {
+    return handleError(error, "POST /api/auth/login");
   }
 }

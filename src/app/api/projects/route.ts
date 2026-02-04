@@ -3,6 +3,7 @@ import { ERROR_CODES } from "@/lib/errorCodes";
 import { sendError, sendSuccess } from "@/lib/responseHandler";
 import { createProjectSchema } from "@/lib/schemas/projectSchema";
 import { ZodError } from "zod";
+import { handleError } from "@/lib/errorHandler";
 
 export async function GET() {
   try {
@@ -11,8 +12,8 @@ export async function GET() {
     });
 
     return sendSuccess(projects);
-  } catch {
-    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
+  } catch (error) {
+    return handleError(error, "GET /api/projects");
   }
 }
 
@@ -68,6 +69,6 @@ export async function POST(req: Request) {
         err.flatten()
       );
     }
-    return sendError("Server error", ERROR_CODES.INTERNAL_ERROR, 500);
+    return handleError(err, "POST /api/projects");
   }
 }
