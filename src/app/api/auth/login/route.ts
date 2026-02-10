@@ -51,7 +51,18 @@ export async function POST(req: Request) {
       }
     );
 
-    return sendSuccess({ token });
+    const response = sendSuccess({ token });
+
+    // Set JWT as a cookie server-side (source of truth for auth)
+    response.cookies.set("token", token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 3600, // 1 hour — matches JWT expiresIn
+    });
+
+    return response;
   } catch (error) {
     return handleError(error, "POST /api/auth/login");
   }

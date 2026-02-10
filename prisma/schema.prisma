@@ -8,14 +8,18 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  createdAt DateTime  @default(now())
-  password  String
-  role      String    @default("user")
-  profile   Profile?
-  projects  Project[]
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  phone        String?
+  bloodGroup   String?
+  createdAt    DateTime      @default(now())
+  password     String
+  role         String        @default("user")
+  profile      Profile?
+  projects     Project[]
+  bloodRequests BloodRequest[]
+  appointments  Appointment[]
 }
 
 model Project {
@@ -31,4 +35,45 @@ model Profile {
   bio    String
   userId Int    @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BloodRequest {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  bloodGroup String
+  quantity   Int
+  urgency    String   @default("Normal")
+  note       String?
+  status     String   @default("Pending")
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Appointment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  date      String
+  time      String
+  location  String
+  status    String   @default("Scheduled")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Campaign {
+  id        Int      @id @default(autoincrement())
+  title     String
+  date      String
+  location  String
+  organizer String
+  createdAt DateTime @default(now())
+}
+
+model BloodBank {
+  id              Int      @id @default(autoincrement())
+  name            String
+  location        String
+  contact         String
+  availableGroups String?
+  createdAt       DateTime @default(now())
 }

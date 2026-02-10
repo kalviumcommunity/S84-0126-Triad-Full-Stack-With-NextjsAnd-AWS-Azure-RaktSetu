@@ -37,6 +37,9 @@ export default function LoginPage() {
       if (token && typeof window !== "undefined") {
         // Store JWT for protected API calls
         window.localStorage.setItem("token", token);
+        // Keep cookie in sync for route protection middleware (/dashboard, /users)
+        const secure = window.location.protocol === "https:" ? "; secure" : "";
+        document.cookie = `token=${encodeURIComponent(token)}; path=/; samesite=lax${secure}`;
       }
 
       setMessage("Login successful. Redirecting...");

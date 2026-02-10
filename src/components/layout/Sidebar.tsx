@@ -18,10 +18,64 @@ export default function Sidebar() {
 
         <li>
           <Link
+            href="/inventory"
+            className="block px-3 py-2 rounded hover:bg-red-100 hover:text-red-600"
+          >
+            Blood Inventory
+          </Link>
+        </li>
+
+        <li>
+          <Link
             href="/users"
             className="block px-3 py-2 rounded hover:bg-red-100 hover:text-red-600"
           >
             Users
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/requests"
+            className="block px-3 py-2 rounded hover:bg-red-100 hover:text-red-600"
+          >
+            Requests
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/appointments"
+            className="block px-3 py-2 rounded hover:bg-red-100 hover:text-red-600"
+          >
+            Appointments
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/blood-banks"
+            className="block px-3 py-2 rounded hover:bg-red-100 hover:text-red-600"
+          >
+            Blood Banks
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/campaigns"
+            className="block px-3 py-2 rounded hover:bg-red-100 hover:text-red-600"
+          >
+            Campaigns
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/settings"
+            className="block px-3 py-2 rounded hover:bg-red-100 hover:text-red-600"
+          >
+            Settings
           </Link>
         </li>
       </ul>
