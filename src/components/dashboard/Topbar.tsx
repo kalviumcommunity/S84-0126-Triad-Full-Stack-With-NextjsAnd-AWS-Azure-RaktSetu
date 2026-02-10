@@ -6,7 +6,7 @@ export default function Topbar() {
       <div className="flex items-center justify-between">
         {/* Left Side */}
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
+          <h3 className="text-3xl font-bold text-gray-900">Dashboard</h3>
           <p className="text-gray-500 text-sm mt-1">Welcome back, Admin</p>
         </div>
 

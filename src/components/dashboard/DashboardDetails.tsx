@@ -12,7 +12,6 @@ import { ReactNode } from "react";
 export default function DashboardDetails() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-      {/* ================= RECENT ACTIVITY ================= */}
       <div className="bg-white p-6 rounded-xl shadow-sm border">
         <div className="flex justify-between items-center mb-4">
           <div>
@@ -207,7 +206,7 @@ function RequestCard({
         <button className="flex-1 bg-red-600 text-white py-2 rounded-lg font-medium hover:bg-red-700 transition">
           Fulfill Request
         </button>
-        <button className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-gray-50">
+        <button className="px-4 py-2 border rounded-lg text-sm font-medium text-black hover:bg-gray-50">
           View Details
         </button>
       </div>
