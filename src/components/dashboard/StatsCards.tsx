@@ -89,7 +89,7 @@ export default function StatsCards() {
             className="bg-white p-6 rounded-xl shadow-sm border"
           >
             <p className="text-gray-500 text-sm">{stat.title}</p>
-            <h2 className="text-3xl font-bold mt-2">{stat.value}</h2>
+            <h2 className="text-3xl font-bold mt-2 text-black">{stat.value}</h2>
             <p
               className={`mt-2 text-sm font-medium ${stat.positive ? "text-green-600" : "text-red-500"}`}
             >

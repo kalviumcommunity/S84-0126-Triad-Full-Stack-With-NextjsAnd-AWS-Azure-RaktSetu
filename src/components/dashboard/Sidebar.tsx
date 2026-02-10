@@ -1,3 +1,5 @@
+"use client";
+import { useRouter, usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Droplet,
@@ -14,7 +16,7 @@ import Image from "next/image";
 interface SidebarItemProps {
   icon: ReactNode;
   label: string;
-  active?: boolean;
+  path: string;
 }
 
 export default function Sidebar() {
@@ -38,18 +40,46 @@ export default function Sidebar() {
           <SidebarItem
             icon={<LayoutDashboard size={18} />}
             label="Dashboard"
-            active
+            path="/dashboard"
           />
-          <SidebarItem icon={<Droplet size={18} />} label="Blood Inventory" />
-          <SidebarItem icon={<Users size={18} />} label="Donors" />
-          <SidebarItem icon={<FileText size={18} />} label="Requests" />
-          <SidebarItem icon={<Calendar size={18} />} label="Appointments" />
+          <SidebarItem
+            icon={<Droplet size={18} />}
+            label="Blood Inventory"
+            path="/dashboard/inventory"
+          />
+          <SidebarItem
+            icon={<Users size={18} />}
+            label="Donors"
+            path="/dashboard/donors"
+          />
+          <SidebarItem
+            icon={<FileText size={18} />}
+            label="Requests"
+            path="/dashboard/requests"
+          />
+          <SidebarItem
+            icon={<Calendar size={18} />}
+            label="Appointments"
+            path="/dashboard/appointments"
+          />
 
           <p className="text-xs text-gray-400 mt-6 mb-2">Management</p>
 
-          <SidebarItem icon={<Building2 size={18} />} label="Blood Banks" />
-          <SidebarItem icon={<Megaphone size={18} />} label="Campaigns" />
-          <SidebarItem icon={<Settings size={18} />} label="Settings" />
+          <SidebarItem
+            icon={<Building2 size={18} />}
+            label="Blood Banks"
+            path="/blood-banks"
+          />
+          <SidebarItem
+            icon={<Megaphone size={18} />}
+            label="Campaigns"
+            path="/campaigns"
+          />
+          <SidebarItem
+            icon={<Settings size={18} />}
+            label="Settings"
+            path="/settings"
+          />
         </nav>
       </div>
 
@@ -66,9 +96,15 @@ export default function Sidebar() {
   );
 }
 
-function SidebarItem({ icon, label, active = false }: SidebarItemProps) {
+function SidebarItem({ icon, label, path }: SidebarItemProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const active = pathname === path;
+
   return (
     <div
+      onClick={() => router.push(path)}
       className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition ${
         active
           ? "bg-red-50 text-red-600 font-semibold"
