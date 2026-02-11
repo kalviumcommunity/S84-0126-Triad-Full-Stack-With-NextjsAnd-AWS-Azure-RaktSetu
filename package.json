@@ -10,6 +10,8 @@
     "test": "echo \"No tests yet\" && exit 0",
     "prepare": "husky install",
     "postinstall": "prisma generate",
+    "smoke:local": "jest __smoke_tests__/health.local.test.js",
+    "smoke:deploy": "jest __smoke_tests__/health.deploy.test.js",
     "smoke": "jest __smoke_tests__"
   },
   "lint-staged": {
