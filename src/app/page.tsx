@@ -121,22 +121,6 @@ export default function Home() {
             )}
           </div>
 
-          {/* Theme Toggle (Assignment Requirement) */}
-          <button
-            onClick={toggleTheme}
-            style={{
-              marginBottom: "40px",
-              padding: "10px 18px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              cursor: "pointer",
-              background: isDark ? "#1e293b" : "#f3f4f6",
-              color: isDark ? "#fff" : "#000",
-            }}
-          >
-            Toggle {isDark ? "Light" : "Dark"} Mode
-          </button>
-
           {/* Stats */}
           <div style={{ display: "flex", gap: "40px" }}>
             <Stat value="50K+" label="Active Donors" />

@@ -1,7 +1,11 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useUIContext } from "@/context/UIContext";
 
 export default function Navbar() {
+  const { theme, toggleTheme } = useUIContext();
+
   return (
     <header
       style={{
@@ -59,6 +63,60 @@ export default function Navbar() {
 
       {/* Actions */}
       <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            backgroundColor: theme === "light" ? "#fbbf24" : "#374151",
+            border: "2px solid #d1d5db",
+            borderRadius: "999px",
+            padding: "4px",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            width: "70px",
+            height: "36px",
+            position: "relative",
+          }}
+          title="Toggle Dark Mode"
+        >
+          {/* Light Mode Icon (Bulb) */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              backgroundColor: theme === "light" ? "white" : "transparent",
+              transition: "all 0.3s ease",
+              fontSize: "16px",
+            }}
+          >
+            💡
+          </div>
+
+          {/* Dark Mode Icon (Moon) */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              backgroundColor: theme === "dark" ? "#1f2937" : "transparent",
+              transition: "all 0.3s ease",
+              fontSize: "16px",
+            }}
+          >
+            🌙
+          </div>
+        </button>
+
         <Link href="/signup" style={{ color: "#000000" }}>
           Sign In
         </Link>
