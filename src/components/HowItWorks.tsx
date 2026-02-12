@@ -1,3 +1,6 @@
+"use client";
+import { useState } from "react";
+
 export default function HowItWorks() {
   return (
     <section
@@ -93,15 +96,26 @@ function Step({
   title: string;
   text: string;
 }) {
+  const [isHovering, setIsHovering] = useState(false);
+
   return (
     <div
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
       style={{
         backgroundColor: "white",
         padding: "30px",
         borderRadius: "16px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
         textAlign: "left",
         position: "relative",
+        cursor: "pointer",
+        transform: isHovering
+          ? "translateY(-8px) scale(1.03)"
+          : "translateY(0)",
+        boxShadow: isHovering
+          ? "0 20px 40px rgba(220, 38, 38, 0.15)"
+          : "0 10px 30px rgba(0,0,0,0.05)",
+        transition: "all 0.3s ease",
       }}
     >
       {/* Step Number Bubble */}
@@ -120,6 +134,8 @@ function Step({
           justifyContent: "center",
           fontWeight: 700,
           fontSize: "14px",
+          boxShadow: isHovering ? "0 8px 20px rgba(220,38,38,0.4)" : "none",
+          transition: "all 0.3s ease",
         }}
       >
         {number}
@@ -135,6 +151,7 @@ function Step({
       >
         {title}
       </h3>
+
       <p style={{ color: "#6b7280", fontSize: "15px" }}>{text}</p>
     </div>
   );
