@@ -1,5 +1,7 @@
 "use client";
+
 import { useRouter } from "next/navigation";
+import React from "react";
 
 type Stat = {
   title: string;
@@ -35,7 +37,7 @@ const stats: Stat[] = [
   },
 ];
 
-export default function StatsCards() {
+function StatsCards() {
   const router = useRouter();
 
   return (
@@ -91,7 +93,9 @@ export default function StatsCards() {
             <p className="text-gray-500 text-sm">{stat.title}</p>
             <h2 className="text-3xl font-bold mt-2 text-black">{stat.value}</h2>
             <p
-              className={`mt-2 text-sm font-medium ${stat.positive ? "text-green-600" : "text-red-500"}`}
+              className={`mt-2 text-sm font-medium ${
+                stat.positive ? "text-green-600" : "text-red-500"
+              }`}
             >
               {stat.change}
             </p>
@@ -101,3 +105,5 @@ export default function StatsCards() {
     </div>
   );
 }
+
+export default React.memo(StatsCards);
