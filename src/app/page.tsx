@@ -7,9 +7,11 @@ import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
 import RolesSection from "@/components/RolesSection";
 import Footer from "@/components/Footer";
+import { useState } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const [isHovering, setIsHovering] = useState(false);
 
   // 🌍 Global Context Values
   const { user, isAuthenticated, logout } = useAuth();
@@ -93,7 +95,19 @@ export default function Home() {
               <>
                 <button
                   onClick={() => router.push("/signup")}
-                  style={primaryBtn}
+                  onMouseEnter={() => setIsHovering(true)}
+                  onMouseLeave={() => setIsHovering(false)}
+                  style={{
+                    ...primaryBtn,
+                    backgroundColor: isHovering ? "#b91c1c" : "#dc2626",
+                    transform: isHovering
+                      ? "translateY(-4px) scale(1.03)"
+                      : "translateY(0)",
+                    boxShadow: isHovering
+                      ? "0 10px 25px rgba(220, 38, 38, 0.4)"
+                      : "0 4px 10px rgba(0,0,0,0.1)",
+                    transition: "all 0.3s ease",
+                  }}
                 >
                   Register as Donor →
                 </button>
