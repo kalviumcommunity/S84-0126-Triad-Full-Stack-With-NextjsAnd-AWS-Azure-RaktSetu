@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Droplet,
@@ -19,35 +18,26 @@ interface SidebarItemProps {
   icon: ReactNode;
   label: string;
   href: string;
+  active?: boolean;
 }
 
-const navItems = [
-  {
-    icon: <LayoutDashboard size={18} />,
-    label: "Dashboard",
-    href: "/dashboard",
-  },
-  { icon: <Droplet size={18} />, label: "Blood Inventory", href: "/inventory" },
-  { icon: <Users size={18} />, label: "Donors", href: "/users" },
-  { icon: <FileText size={18} />, label: "Requests", href: "/requests" },
-  {
-    icon: <Calendar size={18} />,
-    label: "Appointments",
-    href: "/appointments",
-  },
-];
+/* =============================
+   Reusable Tailwind Classes
+   ============================= */
 
-const managementItems = [
-  { icon: <Building2 size={18} />, label: "Blood Banks", href: "/blood-banks" },
-  { icon: <Megaphone size={18} />, label: "Campaigns", href: "/campaigns" },
-  { icon: <Settings size={18} />, label: "Settings", href: "/settings" },
-];
+const sidebarContainerClasses =
+  "w-64 h-screen sticky top-0 bg-white border-r p-5 flex flex-col justify-between";
+
+const sidebarItemBaseClasses =
+  "flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition";
+
+const sidebarItemActiveClasses = "bg-red-50 text-red-600 font-semibold";
+
+const sidebarItemInactiveClasses = "hover:bg-gray-100 text-gray-700";
 
 export default function Sidebar() {
-  const pathname = usePathname();
-
   return (
-    <aside className="w-64 h-screen sticky top-0 bg-white border-r p-5 flex flex-col justify-between">
+    <aside className={sidebarContainerClasses}>
       <div>
         <div className="flex items-center gap-3 mb-8 px-1">
           <Image
@@ -63,23 +53,50 @@ export default function Sidebar() {
         </div>
 
         <nav className="space-y-2">
-          {navItems.map((item) => (
-            <SidebarItem
-              key={item.href}
-              {...item}
-              active={pathname === item.href}
-            />
-          ))}
+          <SidebarItem
+            icon={<LayoutDashboard size={18} />}
+            label="Dashboard"
+            href="/dashboard"
+            active
+          />
+          <SidebarItem
+            icon={<Droplet size={18} />}
+            label="Blood Inventory"
+            href="/inventory"
+          />
+          <SidebarItem
+            icon={<Users size={18} />}
+            label="Donors"
+            href="/users"
+          />
+          <SidebarItem
+            icon={<FileText size={18} />}
+            label="Requests"
+            href="/requests"
+          />
+          <SidebarItem
+            icon={<Calendar size={18} />}
+            label="Appointments"
+            href="/appointments"
+          />
 
           <p className="text-xs text-gray-400 mt-6 mb-2">Management</p>
 
-          {managementItems.map((item) => (
-            <SidebarItem
-              key={item.href}
-              {...item}
-              active={pathname === item.href}
-            />
-          ))}
+          <SidebarItem
+            icon={<Building2 size={18} />}
+            label="Blood Banks"
+            href="/blood-banks"
+          />
+          <SidebarItem
+            icon={<Megaphone size={18} />}
+            label="Campaigns"
+            href="/campaigns"
+          />
+          <SidebarItem
+            icon={<Settings size={18} />}
+            label="Settings"
+            href="/settings"
+          />
         </nav>
       </div>
 
@@ -96,19 +113,12 @@ export default function Sidebar() {
   );
 }
 
-function SidebarItem({
-  icon,
-  label,
-  href,
-  active = false,
-}: SidebarItemProps & { active?: boolean }) {
+function SidebarItem({ icon, label, href, active = false }: SidebarItemProps) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition ${
-        active
-          ? "bg-red-50 text-red-600 font-semibold"
-          : "hover:bg-gray-100 text-gray-700"
+      className={`${sidebarItemBaseClasses} ${
+        active ? sidebarItemActiveClasses : sidebarItemInactiveClasses
       }`}
     >
       {icon}
