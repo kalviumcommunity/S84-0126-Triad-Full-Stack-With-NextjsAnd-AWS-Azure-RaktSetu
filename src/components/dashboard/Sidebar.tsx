@@ -1,5 +1,6 @@
 "use client";
-import { useRouter, usePathname } from "next/navigation";
+
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Droplet,
@@ -18,10 +19,33 @@ interface SidebarItemProps {
   icon: ReactNode;
   label: string;
   href: string;
-  active?: boolean;
 }
 
+const navItems = [
+  {
+    icon: <LayoutDashboard size={18} />,
+    label: "Dashboard",
+    href: "/dashboard",
+  },
+  { icon: <Droplet size={18} />, label: "Blood Inventory", href: "/inventory" },
+  { icon: <Users size={18} />, label: "Donors", href: "/users" },
+  { icon: <FileText size={18} />, label: "Requests", href: "/requests" },
+  {
+    icon: <Calendar size={18} />,
+    label: "Appointments",
+    href: "/appointments",
+  },
+];
+
+const managementItems = [
+  { icon: <Building2 size={18} />, label: "Blood Banks", href: "/blood-banks" },
+  { icon: <Megaphone size={18} />, label: "Campaigns", href: "/campaigns" },
+  { icon: <Settings size={18} />, label: "Settings", href: "/settings" },
+];
+
 export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="w-64 h-screen sticky top-0 bg-white border-r p-5 flex flex-col justify-between">
       <div>
@@ -39,50 +63,23 @@ export default function Sidebar() {
         </div>
 
         <nav className="space-y-2">
-          <SidebarItem
-            icon={<LayoutDashboard size={18} />}
-            label="Dashboard"
-            href="/dashboard"
-            active
-          />
-          <SidebarItem
-            icon={<Droplet size={18} />}
-            label="Blood Inventory"
-            href="/inventory"
-          />
-          <SidebarItem
-            icon={<Users size={18} />}
-            label="Donors"
-            href="/users"
-          />
-          <SidebarItem
-            icon={<FileText size={18} />}
-            label="Requests"
-            href="/requests"
-          />
-          <SidebarItem
-            icon={<Calendar size={18} />}
-            label="Appointments"
-            href="/appointments"
-          />
+          {navItems.map((item) => (
+            <SidebarItem
+              key={item.href}
+              {...item}
+              active={pathname === item.href}
+            />
+          ))}
 
           <p className="text-xs text-gray-400 mt-6 mb-2">Management</p>
 
-          <SidebarItem
-            icon={<Building2 size={18} />}
-            label="Blood Banks"
-            href="/blood-banks"
-          />
-          <SidebarItem
-            icon={<Megaphone size={18} />}
-            label="Campaigns"
-            href="/campaigns"
-          />
-          <SidebarItem
-            icon={<Settings size={18} />}
-            label="Settings"
-            href="/settings"
-          />
+          {managementItems.map((item) => (
+            <SidebarItem
+              key={item.href}
+              {...item}
+              active={pathname === item.href}
+            />
+          ))}
         </nav>
       </div>
 
@@ -99,7 +96,12 @@ export default function Sidebar() {
   );
 }
 
-function SidebarItem({ icon, label, href, active = false }: SidebarItemProps) {
+function SidebarItem({
+  icon,
+  label,
+  href,
+  active = false,
+}: SidebarItemProps & { active?: boolean }) {
   return (
     <Link
       href={href}
