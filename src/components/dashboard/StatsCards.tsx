@@ -86,7 +86,7 @@ export default function StatsCards() {
         {stats.map((stat) => (
           <div
             key={stat.title}
-            className="bg-white p-6 rounded-xl shadow-sm border"
+            className="bg-white p-6 rounded-xl shadow-sm border transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.03] hover:shadow-xl hover:border-red-200 cursor-pointer"
           >
             <p className="text-gray-500 text-sm">{stat.title}</p>
             <h2 className="text-3xl font-bold mt-2 text-black">{stat.value}</h2>
